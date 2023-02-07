@@ -68,7 +68,8 @@
             // event does not depend on it being a letter.
             //
             $("#attempt").keyup(function(event) {
-               var txt = $("#attempt").val();  // Current content of the input field
+               var txt = $("#attempt").val(); 
+               console.log(txt); // Current content of the input field
                var keycode = event.which;      // They key that just went up
                var letter = String.fromCharCode(keycode);
 
@@ -79,6 +80,22 @@
                // so ignoring the shift key we get only the upper case letters.
 
                if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter)) { return }
+
+
+               $.getJSON( "/_check", { text: txt },
+                          function(data) {
+                            rsval = data.result.long_enough;
+                            console.log("rsval: " + rsval)
+                            if (rsval) {
+                               $("#response").html("That's enough!");
+                               $("#attempt").val("");
+                            } else {
+                               $("#response").append(txt.length + " ");
+                            }
+                            showTiles(txt);
+                           }
+                       );
+
 
                $.getJSON( "/_countem", { text: txt },
                           function(data) {
@@ -93,8 +110,10 @@
                             showTiles(txt);
                            }
                        );
+
                });
 
+     
             // Demonstration of how we can insert graphical elements
             // into a page, possibly building up the URLs of the elements
             // dynamically.  In this case I have a set of Scrabble tiles with

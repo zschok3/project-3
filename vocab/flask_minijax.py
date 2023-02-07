@@ -37,6 +37,7 @@ def index():
 @app.route("/_countem")
 def countem():
     text = request.args.get("text", type=str)
+    app.logger.debug(f"TEXT: {text}")
     length = len(text)
     rslt = {"long_enough": length >= 5}
     return flask.jsonify(result=rslt)

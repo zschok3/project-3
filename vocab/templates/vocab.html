@@ -77,7 +77,7 @@
                   <label for="attempt">Word:</label>
                   <input id="attempt" name="attempt" type="text" width="15"
                      autocomplete="off"  autofocus />
-                  <input type="submit" name="try" />
+                  <!-- <input type="submit" name="try" /> -->
                </form>
             </div>
          </div>
@@ -100,5 +100,51 @@
          {% endwith %}
       </div>
       <!-- container -->
+      <script>
+         // Suppress normal form submission
+         $("#entry").submit( function(event) {
+            event.preventDefault();
+           });
+
+         // On each keystroke, ask the server whether the current
+         // word is long enough.
+         //
+         // We use 'keyup' because the form value
+         // is updated before that event is generated.
+         // keypress is triggered before the input field has been
+         // updated.  Be aware that we'll see non-character keys like
+         // shift and control, so make sure whatever you do with the
+         // event does not depend on it being a letter.
+         //
+         $("#attempt").keyup(function(event) {
+            var txt = $("#attempt").val(); 
+            console.log(txt); // Current content of the input field
+            var keycode = event.which;      // They key that just went up
+            var letter = String.fromCharCode(keycode);
+
+            // That letter might not be a letter ... it could be the
+            // the backspace key, or even the shift key, because 'keyup'
+            // catches all kinds of keys.  (Also, the difference between
+            // upper and lower case comes from state of shift key + key code,
+            // so ignoring the shift key we get only the upper case letters.
+
+            if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter)) { return }
+
+
+            $.getJSON( "/_check", { text: txt },
+                       function(data) {
+                        console.log(data)
+                         rsval = data.result.match;
+                         console.log("rsval: " + rsval)
+                         if (rsval) {
+                            $("#response").html("That's enough!");
+                            $("#attempt").val("");
+                         } else {
+                            $("#response").append(txt.length + " ");
+                         }
+                        }
+                    );
+            });
+      </script>
    </body>
 </html>

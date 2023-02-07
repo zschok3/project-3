@@ -79,7 +79,7 @@ def success():
 #   a JSON request handler
 #######################
 
-@app.route("/_check", methods=["POST"])
+@app.route("/_check", methods=["POST", "GET"])
 def check():
     """
     User has submitted the form with a word ('attempt')
@@ -92,10 +92,14 @@ def check():
     app.logger.debug("Entering check")
 
     # The data we need, from form and from cookie
-    text = flask.request.form["attempt"]
+    # text = flask.request.form["attempt"]
+    text = flask.request.args.get("text", type=str)
+    app.logger.debug(f"TEXT: {text}")
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
+    rslt = {'match' : False, 'in_matches' : False}
+    # return flask.jsonify(result=rslt)
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
@@ -105,16 +109,24 @@ def check():
         # Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
+        rslt['match'] = True
+        app.logger.debug("MATCHES")
     elif text in matches:
         flask.flash("You already found {}".format(text))
+        app.logger.debug("ALREADY FOUND")
     elif not matched:
         flask.flash("{} isn't in the list of words".format(text))
+        app.logger.debug("NOT IN LIST")
     elif not in_jumble:
         flask.flash(
             '"{}" can\'t be made from the letters {}'.format(text, jumble))
     else:
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
+
+    return flask.jsonify(result=rslt)
+
+
 
     # Choose page:  Solved enough, or keep going?
     if len(matches) >= flask.session["target_count"]:
