@@ -81,25 +81,15 @@
                </form>
             </div>
          </div>
+
+         <div class="row">
+            <div class="col-xs-6 text-center">
+               <p id="result_display"></p>
+            </div>
+         </div>
+
          <br />
-         {% if session.matches|length is not equalto 0  %}
-         <h2>You found </h2>
-         <p id="results">
-            {% for match in session.matches %}
-            {{ match }}
-            {% endfor %}
-         </p>
-         {% endif %}
-         {% with messages = get_flashed_messages() %}
-         {% if messages %}
-         <!-- Mismatch, already found, etc. "flashed" from Python -->
-         {% for message in messages %}
-         <p class="message">{{ message }}</p>
-         {% endfor %}
-         {% endif %}
-         {% endwith %}
-      </div>
-      <!-- container -->
+      </div> -->  
       <script>
          // Suppress normal form submission
          $("#entry").submit( function(event) {
@@ -134,10 +124,11 @@
             $.getJSON( "/_check", { text: txt },
                        function(data) {
                         console.log(data)
-                         rsval = data.result.match;
-                         console.log("rsval: " + rsval)
-                         if (rsval) {
-                            $("#response").html("That's enough!");
+                         rslt = data.result.match;
+                         console.log(data.result.message);
+                         document.getElementById("result_display").innerHTML = data.result.message;
+                         if (rslt) {
+                            $("#response").html(data.result.message);
                             $("#attempt").val("");
                          } else {
                             $("#response").append(txt.length + " ");

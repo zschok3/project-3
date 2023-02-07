@@ -98,7 +98,7 @@ def check():
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
-    rslt = {'match' : False, 'in_matches' : False}
+    rslt = {'match' : False, 'message' : None}
     # return flask.jsonify(result=rslt)
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
@@ -110,16 +110,15 @@ def check():
         matches.append(text)
         flask.session["matches"] = matches
         rslt['match'] = True
+        rslt['message'] = "Congratulations you found a match!"
         app.logger.debug("MATCHES")
     elif text in matches:
-        flask.flash("You already found {}".format(text))
+        rslt['message'] = f"You already found {test}"
         app.logger.debug("ALREADY FOUND")
     elif not matched:
-        flask.flash("{} isn't in the list of words".format(text))
-        app.logger.debug("NOT IN LIST")
+        rslt['message'] = f"{text} isn't in the list of words"
     elif not in_jumble:
-        flask.flash(
-            '"{}" can\'t be made from the letters {}'.format(text, jumble))
+       rslt['message'] = f'"{text}" can\'t be made from the letters {jumble}'
     else:
         app.logger.debug("This case shouldn't happen!")
         assert False  # Raises AssertionError
