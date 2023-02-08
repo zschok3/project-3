@@ -98,12 +98,13 @@ def check():
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", [])  # Default to empty list
 
-    rslt = {'match' : False, 'message' : None, 'score' : len(matches)}
+    rslt = {'match' : False, 'message' : None, 'score' : len(matches), 'game_won' : False}
     # return flask.jsonify(result=rslt)
     # Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
-
+    target = flask.session["target_count"]
+    app.logger.debug(f"TARGET IS {target} ")
     success_ct = 0 
 
     # Respond appropriately
@@ -112,7 +113,8 @@ def check():
         matches.append(text)
         flask.session["matches"] = matches
         rslt['match'] = True
-        rslt['message'] = "Congratulations you found a match!"
+        if  len(matches) < flask.session["target_count"]:
+            rslt['message'] = "Congratulations you found a match!"
         app.logger.debug("MATCHES")
     elif text in matches:
         rslt['message'] = f"You already found {text}"
@@ -126,6 +128,7 @@ def check():
         assert False  # Raises AssertionError
 
     if len(matches) >= flask.session["target_count"]:
+        rslt["game_won"] = True
         rslt['mesage'] = "Congratulations, you beat the game, to continue playing, just continue guessing!"
 
     # Choose page:  Solved enough, or keep going?

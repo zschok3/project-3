@@ -94,9 +94,12 @@
                <p id="score"></p>
             </div>
          </div>
+         <div class="col-xs-6 text-center">
+            <h2 id="victory"></h2>
+         </div>
 
          <br />
-      </div> -->  
+      </div>   
       <script>
          // Suppress normal form submission
          $("#entry").submit( function(event) {
@@ -132,8 +135,12 @@
                        function(data) {
                         console.log(data)
                          rslt = data.result.match;
+                         game_won = data.result.game_won;
                          console.log(data.result.message);
                          document.getElementById("result_display").innerHTML = data.result.message;
+                         if(game_won) {
+                           document.getElementById("victory").innerHTML = "Congratulations, you have won the game!";
+                         }
                          document.getElementById("score").innerHTML = data.result.score;
                          if (rslt) {
                             $("#response").html(data.result.message);
