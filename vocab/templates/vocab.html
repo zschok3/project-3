@@ -87,6 +87,13 @@
                <p id="result_display"></p>
             </div>
          </div>
+         <div class="row">
+            <div class="col-xs-6 text-center">
+            </div>
+               <h2>Score:</h2>
+               <p id="score"></p>
+            </div>
+         </div>
 
          <br />
       </div> -->  
@@ -127,6 +134,7 @@
                          rslt = data.result.match;
                          console.log(data.result.message);
                          document.getElementById("result_display").innerHTML = data.result.message;
+                         document.getElementById("score").innerHTML = data.result.score;
                          if (rslt) {
                             $("#response").html(data.result.message);
                             $("#attempt").val("");

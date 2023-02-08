@@ -1,3 +1,9 @@
+Kyle Zschokke
+kzschok3@uoregon.edu
+
+This is a game made with jquery.  It was changed from a game that mostly used forms and html methods to one that communicates without refreshing.
+
+
 # UOCIS322 - Project 3 #
 
 You'll learn about JQuery and asynchronous requests in this project.
